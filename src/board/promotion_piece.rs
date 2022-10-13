@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{fmt::Display, str::FromStr};
 
 use super::ParseError;
 
@@ -31,6 +31,19 @@ impl FromStr for PromotionPiece {
     }
 }
 
+impl Display for PromotionPiece {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let piece = match self {
+            PromotionPiece::Knight => "n",
+            PromotionPiece::Bishop => "b",
+            PromotionPiece::Rook => "r",
+            PromotionPiece::Queen => "q",
+        };
+
+        write!(f, "{piece}")
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -59,5 +72,15 @@ mod tests {
     fn parse_promotion_piece_err(#[case] input: &str) {
         let actual = input.parse::<PromotionPiece>();
         assert!(matches!(actual, Err(_)));
+    }
+
+    #[rstest]
+    #[case(PromotionPiece::Knight, "n")]
+    #[case(PromotionPiece::Bishop, "b")]
+    #[case(PromotionPiece::Rook, "r")]
+    #[case(PromotionPiece::Queen, "q")]
+    fn format_promotion_piece(#[case] input: PromotionPiece, #[case] expected: String) {
+        let actual = format!("{input}");
+        assert_eq!(actual, expected);
     }
 }

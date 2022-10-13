@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{fmt::Display, str::FromStr};
 
 use super::{ParseError, PromotionPiece, Square};
 
@@ -60,6 +60,16 @@ impl FromStr for Move {
     }
 }
 
+impl Display for Move {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if let Some(promotion) = &self.promotion {
+            write!(f, "{}{}{promotion}", self.source, self.target)
+        } else {
+            write!(f, "{}{}", self.source, self.target)
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -106,5 +116,31 @@ mod tests {
     fn parse_move_err(#[case] input: &str) {
         let actual = input.parse::<Move>();
         assert!(matches!(actual, Err(_)));
+    }
+
+    #[rstest]
+    #[case(
+        Move::new(Square::new(File::E, Rank::Two), Square::new(File::E, Rank::Four)),
+        "e2e4"
+    )]
+    #[case(
+        Move::new(Square::new(File::E, Rank::Seven), Square::new(File::E, Rank::Two)),
+        "e7e2"
+    )]
+    #[case(
+        Move::new(Square::new(File::E, Rank::One), Square::new(File::G, Rank::One)),
+        "e1g1"
+    )]
+    #[case(
+        Move::new_with_promotion(
+            Square::new(File::E, Rank::Seven),
+            Square::new(File::E, Rank::Eight),
+            PromotionPiece::Queen
+        ),
+        "e7e8q"
+    )]
+    fn format_move(#[case] input: Move, #[case] expected: String) {
+        let actual = format!("{input}");
+        assert_eq!(actual, expected);
     }
 }

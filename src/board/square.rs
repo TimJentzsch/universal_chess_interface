@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{fmt::Display, str::FromStr};
 
 use super::{File, ParseError, Rank};
 
@@ -34,6 +34,12 @@ impl FromStr for Square {
     }
 }
 
+impl Display for Square {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}{}", self.file, self.rank)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -58,5 +64,15 @@ mod tests {
     fn parse_square_err(#[case] input: &str) {
         let actual = input.parse::<Square>();
         assert!(matches!(actual, Err(_)));
+    }
+
+    #[rstest]
+    #[case(Square::new(File::A, Rank::One), "a1")]
+    #[case(Square::new(File::C, Rank::Two), "c2")]
+    #[case(Square::new(File::D, Rank::Six), "d6")]
+    #[case(Square::new(File::H, Rank::Eight), "h8")]
+    fn format_square(#[case] input: Square, #[case] expected: String) {
+        let actual = format!("{input}");
+        assert_eq!(actual, expected);
     }
 }

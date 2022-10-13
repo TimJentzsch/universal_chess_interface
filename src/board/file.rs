@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{fmt::Display, str::FromStr};
 
 use super::ParseError;
 
@@ -39,6 +39,23 @@ impl FromStr for File {
     }
 }
 
+impl Display for File {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let file = match self {
+            File::A => "a",
+            File::B => "b",
+            File::C => "c",
+            File::D => "d",
+            File::E => "e",
+            File::F => "f",
+            File::G => "g",
+            File::H => "h",
+        };
+
+        write!(f, "{file}")
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -74,5 +91,19 @@ mod tests {
     fn parse_file_err(#[case] input: &str) {
         let actual = input.parse::<File>();
         assert!(matches!(actual, Err(_)));
+    }
+
+    #[rstest]
+    #[case(File::A, "a")]
+    #[case(File::B, "b")]
+    #[case(File::C, "c")]
+    #[case(File::D, "d")]
+    #[case(File::E, "e")]
+    #[case(File::F, "f")]
+    #[case(File::G, "g")]
+    #[case(File::H, "h")]
+    fn format_file(#[case] input: File, #[case] expected: String) {
+        let actual = format!("{input}");
+        assert_eq!(actual, expected);
     }
 }
