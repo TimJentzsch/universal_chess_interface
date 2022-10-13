@@ -3,11 +3,13 @@
 mod best_move;
 mod copy_protection;
 mod id;
+mod info;
 mod registration;
 
 pub use self::best_move::BestMoveCommand;
 pub use self::copy_protection::CopyProtectionCommand;
 pub use self::id::IdCommand;
+pub use self::info::InfoCommand;
 pub use self::registration::RegistrationCommand;
 
 /// A command sent from the engine to the GUI.
@@ -40,7 +42,7 @@ pub enum EngineToGuiCommand {
     /// The engine wants to send information to the GUI.
     ///
     /// This should be done whenever one of the info has changed.
-    Info(),
+    Info(InfoCommand),
 
     /// This command tells the GUI which parameters can be changed in the engine.
     ///
