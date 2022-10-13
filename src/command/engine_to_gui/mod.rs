@@ -1,10 +1,14 @@
 //! Commands sent from the engine to the GUI.
 
 mod best_move;
+mod copy_protection;
 mod id;
+mod registration;
 
 pub use self::best_move::BestMoveCommand;
+pub use self::copy_protection::CopyProtectionCommand;
 pub use self::id::IdCommand;
+pub use self::registration::RegistrationCommand;
 
 /// A command sent from the engine to the GUI.
 pub enum EngineToGuiCommand {
@@ -28,10 +32,10 @@ pub enum EngineToGuiCommand {
     ///  If the check is ok the engine should send `copyprotection ok`, otherwise `copyprotection error`.
     /// If there is an error the engine should not function properly but should not quit alone.
     /// If the engine reports copyprotection error the GUI should not use this engine and display an error message instead!
-    CopyProtection(),
+    CopyProtection(CopyProtectionCommand),
 
     /// This is needed for engines that need a username and/or a code to function with all features.
-    Registration(),
+    Registration(RegistrationCommand),
 
     /// The engine wants to send information to the GUI.
     ///
