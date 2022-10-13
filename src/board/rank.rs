@@ -64,7 +64,7 @@ mod tests {
     #[case("")]
     #[case("11")]
     #[case("b3")]
-    fn parse_file_err(#[case] input: &str) {
+    fn parse_rank_err(#[case] input: &str) {
         let actual = input.parse::<Rank>();
         assert!(matches!(actual, Err(_)));
     }
