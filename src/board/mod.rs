@@ -10,4 +10,5 @@ pub use r#move::*;
 pub use rank::*;
 pub use square::*;
 
+#[derive(Debug, PartialEq, Eq)]
 pub struct ParseError;
