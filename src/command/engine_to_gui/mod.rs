@@ -1,9 +1,15 @@
 //! Commands sent from the engine to the GUI.
 
+mod best_move;
+mod id;
+
+pub use self::best_move::BestMoveCommand;
+pub use self::id::IdCommand;
+
 /// A command sent from the engine to the GUI.
 pub enum EngineToGuiCommand {
     /// Identify the engine to the GUI.
-    Id(),
+    Id(IdCommand),
 
     /// Must be sent after the `id` and optional options to tell the GUI that the engine has sent all infos and is ready in UCI mode.
     UciOk,
@@ -12,7 +18,7 @@ pub enum EngineToGuiCommand {
     ReadyOk,
 
     /// the engine has stopped searching and found the move `<move>` best in this position.
-    BestMove(),
+    BestMove(BestMoveCommand),
 
     /// This is needed for copyprotected engines.
     ///
