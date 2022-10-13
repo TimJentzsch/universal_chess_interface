@@ -69,6 +69,8 @@ mod tests {
     #[case("H")]
     #[case("")]
     #[case("aa")]
+    #[case("1")]
+    #[case("c5")]
     fn parse_file_err(#[case] input: &str) {
         let actual = input.parse::<File>();
         assert!(matches!(actual, Err(_)));
