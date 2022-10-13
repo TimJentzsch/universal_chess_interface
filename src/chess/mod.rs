@@ -4,12 +4,14 @@ mod file;
 mod r#move;
 mod promotion_piece;
 mod rank;
+mod score;
 mod square;
 
 pub use file::*;
 pub use promotion_piece::*;
 pub use r#move::*;
 pub use rank::*;
+pub use score::*;
 pub use square::*;
 
 /// An error occured while parsing the given text.
