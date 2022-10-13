@@ -27,13 +27,10 @@ impl FromStr for Square {
             return Err(ParseError);
         }
 
-        let file = s[(0..1)].parse::<File>();
-        let rank = s[(1..2)].parse::<Rank>();
+        let file = s[(0..1)].parse::<File>()?;
+        let rank = s[(1..2)].parse::<Rank>()?;
 
-        match (file, rank) {
-            (Ok(file), Ok(rank)) => Ok(Square { file, rank }),
-            _ => Err(ParseError),
-        }
+        Ok(Square::new(file, rank))
     }
 }
 
