@@ -73,7 +73,7 @@ impl Display for Move {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::board::{File, Rank};
+    use crate::chess::{File, Rank};
     use rstest::rstest;
 
     #[rstest]

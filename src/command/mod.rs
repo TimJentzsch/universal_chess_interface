@@ -1,3 +1,5 @@
+//! Implementations for UCI commands, both from engine to GUI and the other way around.
+
 use std::{
     fmt::Display,
     str::{FromStr, SplitAsciiWhitespace},

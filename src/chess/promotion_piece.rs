@@ -5,9 +5,16 @@ use super::ParseError;
 /// A piece that a pawn can promote to.
 #[derive(Debug, PartialEq, Eq)]
 pub enum PromotionPiece {
+    /// Promoting to a knight, denoted 'n'.
     Knight,
+
+    /// Promoting to a bishop, denoted 'b'.
     Bishop,
+
+    /// Promoting to a rook, denoted 'r'.
     Rook,
+
+    /// Promoting to a queen, denoted 'q'.
     Queen,
 }
 

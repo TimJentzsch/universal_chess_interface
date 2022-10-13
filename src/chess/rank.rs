@@ -5,13 +5,28 @@ use super::ParseError;
 /// A rank of the board, denoted from 1 to 8.
 #[derive(Debug, PartialEq, Eq)]
 pub enum Rank {
+    /// The first rank of the board, denoted `1`.
     One,
+
+    /// The second rank of the board, denoted `2`.
     Two,
+
+    /// The third rank of the board, denoted `3`.
     Three,
+
+    /// The fourth rank of the board, denoted `4`.
     Four,
+
+    /// The fifth rank of the board, denoted `5`.
     Five,
+
+    /// The sixth rank of the board, denoted `6`.
     Six,
+
+    /// The seventh rank of the board, denoted `7`.
     Seven,
+
+    /// The eigth rank of the board, denoted `8`.
     Eight,
 }
 

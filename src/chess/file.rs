@@ -5,13 +5,28 @@ use super::ParseError;
 /// A file of the board, denoted from a to h.
 #[derive(Debug, PartialEq, Eq)]
 pub enum File {
+    /// The first file of the board, denoted `a`.
     A,
+
+    /// The second file of the board, denoted `b`.
     B,
+
+    /// The third file of the board, denoted `c`.
     C,
+
+    /// The forth file of the board, denoted `d`.
     D,
+
+    /// The fifth file of the board, denoted `e`.
     E,
+
+    /// The sixth file of the board, denoted `f`.
     F,
+
+    /// The seventh file of the board, denoted `g`.
     G,
+
+    /// The eigth file of the board, denoted `h`.
     H,
 }
 
