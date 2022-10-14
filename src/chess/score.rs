@@ -1,6 +1,7 @@
 use std::fmt::Display;
 
 /// The current (estimated) evaluation of the game.
+#[derive(Debug, PartialEq, Eq)]
 pub enum Evaluation {
     /// The current player can give checkmate in the given number of moves.
     ///
@@ -32,6 +33,7 @@ impl Display for Evaluation {
 }
 
 /// The current game score.
+#[derive(Debug, PartialEq, Eq)]
 pub struct Score {
     /// The evaluation of the position.
     eval: Evaluation,

@@ -42,7 +42,7 @@ pub enum EngineToGuiCommand {
     /// The engine wants to send information to the GUI.
     ///
     /// This should be done whenever one of the info has changed.
-    Info(InfoCommand),
+    Info(Box<InfoCommand>),
 
     /// This command tells the GUI which parameters can be changed in the engine.
     ///
