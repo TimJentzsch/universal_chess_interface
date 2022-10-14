@@ -1,6 +1,6 @@
-use std::time::Duration;
+use std::{fmt::Display, time::Duration};
 
-use crate::chess::{Move, Score};
+use crate::chess::{Move, MoveLine, Score};
 
 /// A command sending information from the engine to the GUI.
 #[derive(Debug, Default, PartialEq, Eq)]
@@ -34,7 +34,7 @@ pub struct InfoCommand {
     /// The best line found.
     ///
     /// The first number represents the k-th best line.
-    pv: Option<(usize, Vec<Move>)>,
+    pv: Option<(usize, MoveLine)>,
 
     /// The CPU load of the engine in permill.
     cpu_load_permill: Option<usize>,
@@ -42,17 +42,25 @@ pub struct InfoCommand {
     /// The hash table fill in permill.
     hash_full_permill: Option<usize>,
 
+    /// The currently searched move.
+    curr_move: Option<Move>,
+
+    /// The number of the currently searched move.
+    ///
+    /// Should be `1` for the first move, not `0`.
+    curr_move_number: Option<usize>,
+
     /// The given move is refuted by the given line.
     ///
     /// The engine should only send this if the option `UCI_ShowRefutations` is set to `true`.
-    refutation: Option<(Move, Vec<Move>)>,
+    refutation: Option<(Move, MoveLine)>,
 
     /// The line the engine is currently calculating.
     ///
     /// The first paramater represents the CPU number.
     ///
     /// The engine should only send this if the option `UCI_ShowCurrLine` is set to `true`.
-    curr_line: Option<(usize, Vec<Move>)>,
+    curr_line: Option<(usize, MoveLine)>,
 
     /// Any string string which will be displayed by the engine,
     string: Option<String>,
@@ -123,16 +131,36 @@ impl InfoCommand {
     /// This represents the best line that the engine could find.
     ///
     /// If your engine supports multi-PV, use [`InfoCommand::with_multi_pv`] instead.
-    pub fn with_pv(&mut self, principal_variation: Vec<Move>) -> &mut Self {
-        self.pv = Some((1, principal_variation));
+    pub fn with_pv<L>(&mut self, principal_variation: L) -> &mut Self
+    where
+        L: Into<MoveLine>,
+    {
+        self.pv = Some((1, principal_variation.into()));
         self
     }
 
     /// Set the k-th best principal variation (PV).
     ///
     /// `k = 1` represents the best line, `k = 2` the second best, etc.
-    pub fn with_multi_pv(&mut self, kth_best: usize, principal_variation: Vec<Move>) -> &mut Self {
-        self.pv = Some((kth_best, principal_variation));
+    pub fn with_multi_pv<L>(&mut self, kth_best: usize, principal_variation: L) -> &mut Self
+    where
+        L: Into<MoveLine>,
+    {
+        self.pv = Some((kth_best, principal_variation.into()));
+        self
+    }
+
+    /// Set the currently searched move.
+    pub fn with_curr_move(&mut self, curr_move: Move) -> &mut Self {
+        self.curr_move = Some(curr_move);
+        self
+    }
+
+    /// Set the number of the currently searched move.
+    ///
+    /// The first move should be `1`, not `0`.
+    pub fn with_curr_move_number(&mut self, curr_move_number: usize) -> &mut Self {
+        self.curr_move_number = Some(curr_move_number);
         self
     }
 
@@ -151,24 +179,33 @@ impl InfoCommand {
     /// The given move is refuted by the given line.
     ///
     /// The engine should only send this if the option `UCI_ShowRefutations` is set to `true`.
-    pub fn with_refutation(&mut self, mv: Move, refutation: Vec<Move>) -> &mut Self {
-        self.refutation = Some((mv, refutation));
+    pub fn with_refutation<L>(&mut self, mv: Move, refutation: L) -> &mut Self
+    where
+        L: Into<MoveLine>,
+    {
+        self.refutation = Some((mv, refutation.into()));
         self
     }
 
     /// Set the currently calculated line for the first CPU.
     ///
     /// The engine should only send this if the option `UCI_ShowCurrLine` is set to `true`.
-    pub fn with_curr_line(&mut self, line: Vec<Move>) -> &mut Self {
-        self.curr_line = Some((1, line));
+    pub fn with_curr_line<L>(&mut self, line: L) -> &mut Self
+    where
+        L: Into<MoveLine>,
+    {
+        self.curr_line = Some((1, line.into()));
         self
     }
 
     /// Set the currently calculated line for a given CPU.
     ///
     /// The engine should only send this if the option `UCI_ShowCurrLine` is set to `true`.
-    pub fn with_curr_line_for_cpu(&mut self, cpu_num: usize, line: Vec<Move>) -> &mut Self {
-        self.curr_line = Some((cpu_num, line));
+    pub fn with_curr_line_for_cpu<L>(&mut self, cpu_num: usize, line: L) -> &mut Self
+    where
+        L: Into<MoveLine>,
+    {
+        self.curr_line = Some((cpu_num, line.into()));
         self
     }
 
@@ -179,5 +216,96 @@ impl InfoCommand {
     {
         self.string = Some(string.into());
         self
+    }
+}
+
+impl Display for InfoCommand {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // Example from Stockfish:
+        // info depth 1 seldepth 1 multipv 1 score cp 112 nodes 20 nps 20000 tbhits 0 time 1 pv e2e4
+        let mut output = "info".to_string();
+
+        // depth 1
+        if let Some(depth) = self.depth_plies {
+            output += &format!(" depth {depth}");
+        }
+
+        // seldepth 1
+        if let Some(sel_depth) = self.sel_depth_plies {
+            output += &format!(" seldepth {sel_depth}");
+        }
+
+        // score cp 112
+        if let Some(score) = &self.score {
+            output += &format!(" score {score}");
+        }
+
+        // nodes 20
+        if let Some(nodes) = self.node_count {
+            output += &format!(" nodes {nodes}");
+        }
+
+        // nps 20000
+        if let Some(nps) = self.nodes_per_second {
+            output += &format!(" nps {nps}");
+        }
+
+        // tbhits 0
+        if let Some(tbhits) = self.endgame_tb_hits {
+            output += &format!(" tbhits {tbhits}");
+        }
+
+        // sbhits 0
+        if let Some(sbhits) = self.shredder_tb_hits {
+            output += &format!(" sbhits {sbhits}");
+        }
+
+        // time 1
+        if let Some(time) = self.time {
+            output += &format!(" time {}", time.as_millis());
+        }
+
+        // currmove e2e4
+        if let Some(curr_move) = &self.curr_move {
+            output += &format!(" currmove {curr_move}");
+        }
+
+        // currmovenumber 14
+        if let Some(curr_move_number) = &self.curr_move_number {
+            output += &format!(" currmovenumber {curr_move_number}");
+        }
+
+        // cpuload 10
+        if let Some(cpuload) = self.cpu_load_permill {
+            output += &format!(" cpuload {cpuload}");
+        }
+
+        // hashfull
+        if let Some(hashfull) = self.hash_full_permill {
+            output += &format!(" hashfull {hashfull}");
+        }
+
+        // refutation d1h5 g6h5
+        if let Some((mv, refutation)) = &self.refutation {
+            let mut refute_output = format!(" refutation {mv}");
+
+            if !refutation.is_empty() {
+                refute_output += &format!(" {refutation}");
+            }
+
+            output += &refute_output;
+        }
+
+        // currline 1 e2e4
+        if let Some((cpu_num, line)) = &self.curr_line {
+            output += &format!(" currline {cpu_num} {line}");
+        }
+
+        // multipv 1 pv e2e4
+        if let Some((multi_pv, pv)) = &self.pv {
+            output += &format!(" multipv {multi_pv} pv {pv}");
+        }
+
+        write!(f, "{output}")
     }
 }

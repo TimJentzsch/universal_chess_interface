@@ -2,12 +2,14 @@
 
 mod file;
 mod r#move;
+mod move_line;
 mod promotion_piece;
 mod rank;
 mod score;
 mod square;
 
 pub use file::*;
+pub use move_line::*;
 pub use promotion_piece::*;
 pub use r#move::*;
 pub use rank::*;
