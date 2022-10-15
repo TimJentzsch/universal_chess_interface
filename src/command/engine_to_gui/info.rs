@@ -75,7 +75,7 @@ impl InfoCommand {
     }
 
     /// Set the search depth (in plies).
-    pub fn with_depth_plies(&mut self, depth_plies: usize) -> &mut Self {
+    pub fn with_depth_plies(mut self, depth_plies: usize) -> Self {
         self.depth_plies = Some(depth_plies);
         self
     }
@@ -83,37 +83,37 @@ impl InfoCommand {
     /// Select the selective search depth (in plies).
     ///
     /// This should be set together with depth.
-    pub fn with_sel_depth_plies(&mut self, sel_depth_plies: usize) -> &mut Self {
+    pub fn with_sel_depth_plies(mut self, sel_depth_plies: usize) -> Self {
         self.sel_depth_plies = Some(sel_depth_plies);
         self
     }
 
     /// Set the score that the engine estimates for the current position.
-    pub fn with_score(&mut self, score: Score) -> &mut Self {
+    pub fn with_score(mut self, score: Score) -> Self {
         self.score = Some(score);
         self
     }
 
     /// Set the number of nodes that the engine has searched.
-    pub fn with_node_count(&mut self, node_count: usize) -> &mut Self {
+    pub fn with_node_count(mut self, node_count: usize) -> Self {
         self.node_count = Some(node_count);
         self
     }
 
     /// Set the number of nodes that the engine has searched per second.
-    pub fn with_nodes_per_second(&mut self, nodes_per_second: usize) -> &mut Self {
+    pub fn with_nodes_per_second(mut self, nodes_per_second: usize) -> Self {
         self.nodes_per_second = Some(nodes_per_second);
         self
     }
 
     /// Set the number of positions that were found in endgame table bases.
-    pub fn with_endgame_tb_hits(&mut self, endgame_tb_hits: usize) -> &mut Self {
+    pub fn with_endgame_tb_hits(mut self, endgame_tb_hits: usize) -> Self {
         self.endgame_tb_hits = Some(endgame_tb_hits);
         self
     }
 
     /// Set the number of positions that were found in the shredder endgame databases.
-    pub fn with_shredder_tb_hits(&mut self, shredder_tb_hits: usize) -> &mut Self {
+    pub fn with_shredder_tb_hits(mut self, shredder_tb_hits: usize) -> Self {
         self.shredder_tb_hits = Some(shredder_tb_hits);
         self
     }
@@ -121,7 +121,7 @@ impl InfoCommand {
     /// Set the time that the engine searched.
     ///
     /// Should be sent together with `pv`.
-    pub fn with_time(&mut self, time: Duration) -> &mut Self {
+    pub fn with_time(mut self, time: Duration) -> Self {
         self.time = Some(time);
         self
     }
@@ -131,7 +131,7 @@ impl InfoCommand {
     /// This represents the best line that the engine could find.
     ///
     /// If your engine supports multi-PV, use [`InfoCommand::with_multi_pv`] instead.
-    pub fn with_pv<L>(&mut self, principal_variation: L) -> &mut Self
+    pub fn with_pv<L>(mut self, principal_variation: L) -> Self
     where
         L: Into<MoveLine>,
     {
@@ -142,7 +142,7 @@ impl InfoCommand {
     /// Set the k-th best principal variation (PV).
     ///
     /// `k = 1` represents the best line, `k = 2` the second best, etc.
-    pub fn with_multi_pv<L>(&mut self, kth_best: usize, principal_variation: L) -> &mut Self
+    pub fn with_multi_pv<L>(mut self, kth_best: usize, principal_variation: L) -> Self
     where
         L: Into<MoveLine>,
     {
@@ -151,7 +151,7 @@ impl InfoCommand {
     }
 
     /// Set the currently searched move.
-    pub fn with_curr_move(&mut self, curr_move: Move) -> &mut Self {
+    pub fn with_curr_move(mut self, curr_move: Move) -> Self {
         self.curr_move = Some(curr_move);
         self
     }
@@ -159,19 +159,19 @@ impl InfoCommand {
     /// Set the number of the currently searched move.
     ///
     /// The first move should be `1`, not `0`.
-    pub fn with_curr_move_number(&mut self, curr_move_number: usize) -> &mut Self {
+    pub fn with_curr_move_number(mut self, curr_move_number: usize) -> Self {
         self.curr_move_number = Some(curr_move_number);
         self
     }
 
     /// Set the engine's CPU load, in permill.
-    pub fn with_cpu_load_permill(&mut self, cpu_load_permill: usize) -> &mut Self {
+    pub fn with_cpu_load_permill(mut self, cpu_load_permill: usize) -> Self {
         self.cpu_load_permill = Some(cpu_load_permill);
         self
     }
 
     /// Set the load of the hash table in permill.
-    pub fn with_hash_full_permill(&mut self, hash_full_permill: usize) -> &mut Self {
+    pub fn with_hash_full_permill(mut self, hash_full_permill: usize) -> Self {
         self.hash_full_permill = Some(hash_full_permill);
         self
     }
@@ -179,7 +179,7 @@ impl InfoCommand {
     /// The given move is refuted by the given line.
     ///
     /// The engine should only send this if the option `UCI_ShowRefutations` is set to `true`.
-    pub fn with_refutation<L>(&mut self, mv: Move, refutation: L) -> &mut Self
+    pub fn with_refutation<L>(mut self, mv: Move, refutation: L) -> Self
     where
         L: Into<MoveLine>,
     {
@@ -190,7 +190,7 @@ impl InfoCommand {
     /// Set the currently calculated line for the first CPU.
     ///
     /// The engine should only send this if the option `UCI_ShowCurrLine` is set to `true`.
-    pub fn with_curr_line<L>(&mut self, line: L) -> &mut Self
+    pub fn with_curr_line<L>(mut self, line: L) -> Self
     where
         L: Into<MoveLine>,
     {
@@ -201,7 +201,7 @@ impl InfoCommand {
     /// Set the currently calculated line for a given CPU.
     ///
     /// The engine should only send this if the option `UCI_ShowCurrLine` is set to `true`.
-    pub fn with_curr_line_for_cpu<L>(&mut self, cpu_num: usize, line: L) -> &mut Self
+    pub fn with_curr_line_for_cpu<L>(mut self, cpu_num: usize, line: L) -> Self
     where
         L: Into<MoveLine>,
     {
@@ -210,7 +210,7 @@ impl InfoCommand {
     }
 
     /// Send any text as info.
-    pub fn with_string<S>(&mut self, string: S) -> &mut Self
+    pub fn with_string<S>(mut self, string: S) -> Self
     where
         S: Into<String>,
     {
@@ -237,7 +237,7 @@ impl Display for InfoCommand {
 
         // score cp 112
         if let Some(score) = &self.score {
-            output += &format!(" score {score}");
+            output += &format!(" {score}");
         }
 
         // nodes 20
@@ -307,5 +307,28 @@ impl Display for InfoCommand {
         }
 
         write!(f, "{output}")
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::chess::{Evaluation, File, Move, MoveLine, Rank, Score, Square};
+
+    #[test]
+    fn format_info_search() {
+        let cmd = InfoCommand::new()
+            .with_depth_plies(3)
+            .with_sel_depth_plies(3)
+            .with_pv("c2c4 a7a6 e2e4".parse::<MoveLine>().unwrap())
+            .with_score(Score::new(Evaluation::Centipawns(37)))
+            .with_node_count(191)
+            .with_nodes_per_second(191000)
+            .with_endgame_tb_hits(0)
+            .with_time(Duration::from_millis(1));
+
+        let actual = format!("{cmd}");
+
+        assert_eq!(actual, "info depth 3 seldepth 3 score cp 37 nodes 191 nps 191000 tbhits 0 time 1 multipv 1 pv c2c4 a7a6 e2e4".to_string());
     }
 }

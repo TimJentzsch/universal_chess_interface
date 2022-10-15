@@ -1,6 +1,6 @@
-use std::fmt::Display;
+use std::{fmt::Display, str::FromStr};
 
-use super::Move;
+use super::{Move, ParseError};
 
 /// A line of moves.
 #[derive(Debug, PartialEq, Eq)]
@@ -20,6 +20,12 @@ impl MoveLine {
     /// Add a move to the end of the line.
     pub fn push(&mut self, mv: Move) {
         self.0.push(mv)
+    }
+}
+
+impl FromIterator<Move> for MoveLine {
+    fn from_iter<T: IntoIterator<Item = Move>>(iter: T) -> Self {
+        MoveLine(iter.into_iter().collect())
     }
 }
 
@@ -44,10 +50,21 @@ impl Display for MoveLine {
     }
 }
 
+impl FromStr for MoveLine {
+    type Err = ParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        s.split_ascii_whitespace()
+            .map(|mv_str| mv_str.parse::<Move>())
+            .collect()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::super::Move;
     use super::*;
+    use crate::chess::{File, Rank, Square};
     use rstest::rstest;
 
     #[rstest]
@@ -60,7 +77,7 @@ mod tests {
             Square::new(File::E, Rank::One),
             Square::new(File::G, Rank::One),
         ),
-    ], "e2e4 e1g1")]
+    ].into(), "e2e4 e1g1")]
     fn format_line(#[case] input: MoveLine, #[case] expected: String) {
         let actual = format!("{input}");
         assert_eq!(actual, expected);
