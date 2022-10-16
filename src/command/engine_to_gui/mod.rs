@@ -4,6 +4,7 @@ mod best_move;
 mod copy_protection;
 mod id;
 mod info;
+mod option;
 mod registration;
 
 pub use self::best_move::BestMoveCommand;
